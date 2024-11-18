@@ -8,7 +8,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/NishimuraTakuya-nt/go-graphql/graph/model"
+	"github.com/NishimuraTakuya-nt/go-graphql/_old/graph/model"
 )
 
 // CreateTodo is the resolver for the createTodo field.
@@ -21,7 +21,7 @@ func (r *queryResolver) Todos(ctx context.Context) ([]*model.Todo, error) {
 	return []*model.Todo{
 		{
 			ID:   "1",
-			Text: "todo1x",
+			Text: "todo1xx",
 			Done: false,
 		},
 	}, nil

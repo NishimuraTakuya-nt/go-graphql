@@ -1,0 +1,46 @@
+.PHONY: lint lint-fix test down build up clean generate wire swagger generate-mocks help
+
+NAME := go-graphql
+DC := docker compose
+LDFLAGS := -ldflags="-s -w -extldflags \"-static\""
+
+## CI #########################################################################################
+lint: ## Run linter
+	golangci-lint run
+
+lint-fix: ## Run linter with fix
+	golangci-lint run --fix
+
+test: ## Run tests
+	go test -v ./...
+
+## Container ##################################################################################
+down: ## Stop container
+	$(DC) down
+
+build: ## Build image
+	$(DC) build $(NAME)
+
+up: ## Run container
+	$(DC) up -d
+
+clean: ## Clean up
+	docker system prune -f
+
+## Generate ###################################################################################
+generate:
+	go run github.com/99designs/gqlgen generate
+
+wire: ## Generate wire
+	wire ./cmd/api
+
+swagger: ## Generate swagger
+	swag init -g cmd/api/main.go -o docs/swagger
+	npm run convert-openapi
+
+generate-mocks:
+	go generate ./internal/mocks/...
+
+
+help: ## display this help.
+	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
