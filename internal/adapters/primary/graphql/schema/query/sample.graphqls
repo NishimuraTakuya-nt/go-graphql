@@ -1,0 +1,7 @@
+extend type Query {
+    """
+    IDによるサンプルの取得
+    """
+    sample(id: ID!): Sample
+
+}

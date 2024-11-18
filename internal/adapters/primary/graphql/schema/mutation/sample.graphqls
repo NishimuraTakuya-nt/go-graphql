@@ -1,0 +1,41 @@
+extend type Mutation {
+    """
+    サンプルの作成
+    """
+    createSample(input: CreateSampleInput!): CreateSamplePayload!
+}
+
+"""
+サンプル作成の入力
+"""
+input CreateSampleInput {
+    """
+    文字列値
+    """
+    stringVal: String!
+
+    """
+    整数値
+    """
+    intVal: Int!
+
+    """
+    文字列配列
+    """
+    arrayVal: [String!]!
+
+    """
+    メールアドレス
+    """
+    email: String!
+}
+
+"""
+サンプル作成のレスポンス
+"""
+type CreateSamplePayload {
+    """
+    作成されたサンプル
+    """
+    sample: Sample!
+}

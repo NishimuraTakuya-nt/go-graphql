@@ -1,0 +1,37 @@
+
+type SampleX {
+    """
+    サンプルの一意識別子
+    """
+    id: ID!
+
+    """
+    文字列値
+    """
+    stringVal: String!
+
+    """
+    整数値
+    """
+    intVal: Int!
+
+    """
+    文字列配列
+    """
+    arrayVal: [String!]!
+
+    """
+    メールアドレス
+    """
+    email: String!
+
+    """
+    作成日時
+    """
+    createdAt: DateTime!
+
+    """
+    更新日時
+    """
+    updatedAt: DateTime!
+}

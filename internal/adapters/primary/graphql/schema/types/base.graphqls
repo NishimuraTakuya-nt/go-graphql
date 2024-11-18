@@ -1,0 +1,9 @@
+type Query {
+    # ベースとなるクエリ型（空でもOK）
+    _empty: String
+}
+
+type Mutation {
+    # ベースとなるミューテーション型（空でもOK）
+    _empty: String
+}
