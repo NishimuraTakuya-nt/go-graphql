@@ -36,7 +36,6 @@ resolver:
 #      }
 #    {{- end }}
 
-
 # Optional: turn on use ` + "`" + `gqlgen:"fieldName"` + "`" + ` tags in your models
 struct_tag: json
 

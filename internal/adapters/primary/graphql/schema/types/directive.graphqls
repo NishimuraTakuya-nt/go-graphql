@@ -1,0 +1,19 @@
+"""
+カスタムディレクティブの定義
+"""
+directive @validate(
+    # 必須チェック
+    required: Boolean
+    # 最小文字数
+    minLength: Int
+    # 最大文字数
+    maxLength: Int
+    # 最小値
+    min: Int
+    # 最大値
+    max: Int
+    # メールアドレス形式
+    email: Boolean
+    # 正規表現パターン
+    pattern: String
+) on INPUT_FIELD_DEFINITION | FIELD_DEFINITION

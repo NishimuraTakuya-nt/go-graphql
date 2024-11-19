@@ -44,6 +44,7 @@ type ResolverRoot interface {
 }
 
 type DirectiveRoot struct {
+	Validate func(ctx context.Context, obj interface{}, next graphql.Resolver, required *bool, minLength *int, maxLength *int, min *int, max *int, email *bool, pattern *string) (res interface{}, err error)
 }
 
 type ComplexityRoot struct {
@@ -413,22 +414,22 @@ input CreateSampleInput {
     """
     文字列値
     """
-    stringVal: String!
+    stringVal: String! @validate(minLength: 2, maxLength: 100)
 
     """
     整数値
     """
-    intVal: Int!
+    intVal: Int! @validate(min: 0, max: 1000)
 
     """
     文字列配列
     """
-    arrayVal: [String!]!
+    arrayVal: [String!]! @validate(minLength: 1, maxLength: 50)
 
     """
     メールアドレス
     """
-    email: String!
+    email: String! @validate(email: true)
 }
 
 """
@@ -439,7 +440,8 @@ type CreateSamplePayload {
     作成されたサンプル
     """
     sample: Sample!
-}`, BuiltIn: false},
+}
+`, BuiltIn: false},
 	{Name: "../schema/mutation/sampleX.graphqls", Input: `extend type Mutation {
     """
     サンプルの作成
@@ -504,6 +506,26 @@ type Mutation {
     # ベースとなるミューテーション型（空でもOK）
     _empty: String
 }
+`, BuiltIn: false},
+	{Name: "../schema/types/directive.graphqls", Input: `"""
+カスタムディレクティブの定義
+"""
+directive @validate(
+    # 必須チェック
+    required: Boolean
+    # 最小文字数
+    minLength: Int
+    # 最大文字数
+    maxLength: Int
+    # 最小値
+    min: Int
+    # 最大値
+    max: Int
+    # メールアドレス形式
+    email: Boolean
+    # 正規表現パターン
+    pattern: String
+) on INPUT_FIELD_DEFINITION | FIELD_DEFINITION
 `, BuiltIn: false},
 	{Name: "../schema/types/sample.graphqls", Input: `
 type Sample {
@@ -593,6 +615,200 @@ var parsedSchema = gqlparser.MustLoadSchema(sources...)
 // endregion ************************** generated!.gotpl **************************
 
 // region    ***************************** args.gotpl *****************************
+
+func (ec *executionContext) dir_validate_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	arg0, err := ec.dir_validate_argsRequired(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["required"] = arg0
+	arg1, err := ec.dir_validate_argsMinLength(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["minLength"] = arg1
+	arg2, err := ec.dir_validate_argsMaxLength(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["maxLength"] = arg2
+	arg3, err := ec.dir_validate_argsMin(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["min"] = arg3
+	arg4, err := ec.dir_validate_argsMax(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["max"] = arg4
+	arg5, err := ec.dir_validate_argsEmail(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["email"] = arg5
+	arg6, err := ec.dir_validate_argsPattern(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["pattern"] = arg6
+	return args, nil
+}
+func (ec *executionContext) dir_validate_argsRequired(
+	ctx context.Context,
+	rawArgs map[string]interface{},
+) (*bool, error) {
+	// We won't call the directive if the argument is null.
+	// Set call_argument_directives_with_null to true to call directives
+	// even if the argument is null.
+	_, ok := rawArgs["required"]
+	if !ok {
+		var zeroVal *bool
+		return zeroVal, nil
+	}
+
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("required"))
+	if tmp, ok := rawArgs["required"]; ok {
+		return ec.unmarshalOBoolean2ᚖbool(ctx, tmp)
+	}
+
+	var zeroVal *bool
+	return zeroVal, nil
+}
+
+func (ec *executionContext) dir_validate_argsMinLength(
+	ctx context.Context,
+	rawArgs map[string]interface{},
+) (*int, error) {
+	// We won't call the directive if the argument is null.
+	// Set call_argument_directives_with_null to true to call directives
+	// even if the argument is null.
+	_, ok := rawArgs["minLength"]
+	if !ok {
+		var zeroVal *int
+		return zeroVal, nil
+	}
+
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("minLength"))
+	if tmp, ok := rawArgs["minLength"]; ok {
+		return ec.unmarshalOInt2ᚖint(ctx, tmp)
+	}
+
+	var zeroVal *int
+	return zeroVal, nil
+}
+
+func (ec *executionContext) dir_validate_argsMaxLength(
+	ctx context.Context,
+	rawArgs map[string]interface{},
+) (*int, error) {
+	// We won't call the directive if the argument is null.
+	// Set call_argument_directives_with_null to true to call directives
+	// even if the argument is null.
+	_, ok := rawArgs["maxLength"]
+	if !ok {
+		var zeroVal *int
+		return zeroVal, nil
+	}
+
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("maxLength"))
+	if tmp, ok := rawArgs["maxLength"]; ok {
+		return ec.unmarshalOInt2ᚖint(ctx, tmp)
+	}
+
+	var zeroVal *int
+	return zeroVal, nil
+}
+
+func (ec *executionContext) dir_validate_argsMin(
+	ctx context.Context,
+	rawArgs map[string]interface{},
+) (*int, error) {
+	// We won't call the directive if the argument is null.
+	// Set call_argument_directives_with_null to true to call directives
+	// even if the argument is null.
+	_, ok := rawArgs["min"]
+	if !ok {
+		var zeroVal *int
+		return zeroVal, nil
+	}
+
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("min"))
+	if tmp, ok := rawArgs["min"]; ok {
+		return ec.unmarshalOInt2ᚖint(ctx, tmp)
+	}
+
+	var zeroVal *int
+	return zeroVal, nil
+}
+
+func (ec *executionContext) dir_validate_argsMax(
+	ctx context.Context,
+	rawArgs map[string]interface{},
+) (*int, error) {
+	// We won't call the directive if the argument is null.
+	// Set call_argument_directives_with_null to true to call directives
+	// even if the argument is null.
+	_, ok := rawArgs["max"]
+	if !ok {
+		var zeroVal *int
+		return zeroVal, nil
+	}
+
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("max"))
+	if tmp, ok := rawArgs["max"]; ok {
+		return ec.unmarshalOInt2ᚖint(ctx, tmp)
+	}
+
+	var zeroVal *int
+	return zeroVal, nil
+}
+
+func (ec *executionContext) dir_validate_argsEmail(
+	ctx context.Context,
+	rawArgs map[string]interface{},
+) (*bool, error) {
+	// We won't call the directive if the argument is null.
+	// Set call_argument_directives_with_null to true to call directives
+	// even if the argument is null.
+	_, ok := rawArgs["email"]
+	if !ok {
+		var zeroVal *bool
+		return zeroVal, nil
+	}
+
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("email"))
+	if tmp, ok := rawArgs["email"]; ok {
+		return ec.unmarshalOBoolean2ᚖbool(ctx, tmp)
+	}
+
+	var zeroVal *bool
+	return zeroVal, nil
+}
+
+func (ec *executionContext) dir_validate_argsPattern(
+	ctx context.Context,
+	rawArgs map[string]interface{},
+) (*string, error) {
+	// We won't call the directive if the argument is null.
+	// Set call_argument_directives_with_null to true to call directives
+	// even if the argument is null.
+	_, ok := rawArgs["pattern"]
+	if !ok {
+		var zeroVal *string
+		return zeroVal, nil
+	}
+
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("pattern"))
+	if tmp, ok := rawArgs["pattern"]; ok {
+		return ec.unmarshalOString2ᚖstring(ctx, tmp)
+	}
+
+	var zeroVal *string
+	return zeroVal, nil
+}
 
 func (ec *executionContext) field_Mutation_createSampleX_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
@@ -3753,32 +3969,129 @@ func (ec *executionContext) unmarshalInputCreateSampleInput(ctx context.Context,
 		switch k {
 		case "stringVal":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("stringVal"))
-			data, err := ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
+			directive0 := func(ctx context.Context) (interface{}, error) { return ec.unmarshalNString2string(ctx, v) }
+
+			directive1 := func(ctx context.Context) (interface{}, error) {
+				minLength, err := ec.unmarshalOInt2ᚖint(ctx, 2)
+				if err != nil {
+					var zeroVal string
+					return zeroVal, err
+				}
+				maxLength, err := ec.unmarshalOInt2ᚖint(ctx, 100)
+				if err != nil {
+					var zeroVal string
+					return zeroVal, err
+				}
+				if ec.directives.Validate == nil {
+					var zeroVal string
+					return zeroVal, errors.New("directive validate is not implemented")
+				}
+				return ec.directives.Validate(ctx, obj, directive0, nil, minLength, maxLength, nil, nil, nil, nil)
 			}
-			it.StringVal = data
+
+			tmp, err := directive1(ctx)
+			if err != nil {
+				return it, graphql.ErrorOnPath(ctx, err)
+			}
+			if data, ok := tmp.(string); ok {
+				it.StringVal = data
+			} else {
+				err := fmt.Errorf(`unexpected type %T from directive, should be string`, tmp)
+				return it, graphql.ErrorOnPath(ctx, err)
+			}
 		case "intVal":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("intVal"))
-			data, err := ec.unmarshalNInt2int(ctx, v)
-			if err != nil {
-				return it, err
+			directive0 := func(ctx context.Context) (interface{}, error) { return ec.unmarshalNInt2int(ctx, v) }
+
+			directive1 := func(ctx context.Context) (interface{}, error) {
+				min, err := ec.unmarshalOInt2ᚖint(ctx, 0)
+				if err != nil {
+					var zeroVal int
+					return zeroVal, err
+				}
+				max, err := ec.unmarshalOInt2ᚖint(ctx, 1000)
+				if err != nil {
+					var zeroVal int
+					return zeroVal, err
+				}
+				if ec.directives.Validate == nil {
+					var zeroVal int
+					return zeroVal, errors.New("directive validate is not implemented")
+				}
+				return ec.directives.Validate(ctx, obj, directive0, nil, nil, nil, min, max, nil, nil)
 			}
-			it.IntVal = data
+
+			tmp, err := directive1(ctx)
+			if err != nil {
+				return it, graphql.ErrorOnPath(ctx, err)
+			}
+			if data, ok := tmp.(int); ok {
+				it.IntVal = data
+			} else {
+				err := fmt.Errorf(`unexpected type %T from directive, should be int`, tmp)
+				return it, graphql.ErrorOnPath(ctx, err)
+			}
 		case "arrayVal":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("arrayVal"))
-			data, err := ec.unmarshalNString2ᚕstringᚄ(ctx, v)
-			if err != nil {
-				return it, err
+			directive0 := func(ctx context.Context) (interface{}, error) { return ec.unmarshalNString2ᚕstringᚄ(ctx, v) }
+
+			directive1 := func(ctx context.Context) (interface{}, error) {
+				minLength, err := ec.unmarshalOInt2ᚖint(ctx, 1)
+				if err != nil {
+					var zeroVal []string
+					return zeroVal, err
+				}
+				maxLength, err := ec.unmarshalOInt2ᚖint(ctx, 50)
+				if err != nil {
+					var zeroVal []string
+					return zeroVal, err
+				}
+				if ec.directives.Validate == nil {
+					var zeroVal []string
+					return zeroVal, errors.New("directive validate is not implemented")
+				}
+				return ec.directives.Validate(ctx, obj, directive0, nil, minLength, maxLength, nil, nil, nil, nil)
 			}
-			it.ArrayVal = data
+
+			tmp, err := directive1(ctx)
+			if err != nil {
+				return it, graphql.ErrorOnPath(ctx, err)
+			}
+			if data, ok := tmp.([]string); ok {
+				it.ArrayVal = data
+			} else if tmp == nil {
+				it.ArrayVal = nil
+			} else {
+				err := fmt.Errorf(`unexpected type %T from directive, should be []string`, tmp)
+				return it, graphql.ErrorOnPath(ctx, err)
+			}
 		case "email":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("email"))
-			data, err := ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
+			directive0 := func(ctx context.Context) (interface{}, error) { return ec.unmarshalNString2string(ctx, v) }
+
+			directive1 := func(ctx context.Context) (interface{}, error) {
+				email, err := ec.unmarshalOBoolean2ᚖbool(ctx, true)
+				if err != nil {
+					var zeroVal string
+					return zeroVal, err
+				}
+				if ec.directives.Validate == nil {
+					var zeroVal string
+					return zeroVal, errors.New("directive validate is not implemented")
+				}
+				return ec.directives.Validate(ctx, obj, directive0, nil, nil, nil, nil, nil, email, nil)
 			}
-			it.Email = data
+
+			tmp, err := directive1(ctx)
+			if err != nil {
+				return it, graphql.ErrorOnPath(ctx, err)
+			}
+			if data, ok := tmp.(string); ok {
+				it.Email = data
+			} else {
+				err := fmt.Errorf(`unexpected type %T from directive, should be string`, tmp)
+				return it, graphql.ErrorOnPath(ctx, err)
+			}
 		}
 	}
 
@@ -4991,6 +5304,22 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 		return graphql.Null
 	}
 	res := graphql.MarshalBoolean(*v)
+	return res
+}
+
+func (ec *executionContext) unmarshalOInt2ᚖint(ctx context.Context, v interface{}) (*int, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := graphql.UnmarshalInt(v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOInt2ᚖint(ctx context.Context, sel ast.SelectionSet, v *int) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	res := graphql.MarshalInt(*v)
 	return res
 }
 

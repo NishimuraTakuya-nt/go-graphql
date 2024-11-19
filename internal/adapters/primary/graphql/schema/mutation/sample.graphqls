@@ -12,22 +12,22 @@ input CreateSampleInput {
     """
     文字列値
     """
-    stringVal: String!
+    stringVal: String! @validate(minLength: 2, maxLength: 100)
 
     """
     整数値
     """
-    intVal: Int!
+    intVal: Int! @validate(min: 0, max: 1000)
 
     """
     文字列配列
     """
-    arrayVal: [String!]!
+    arrayVal: [String!]! @validate(minLength: 1, maxLength: 50)
 
     """
     メールアドレス
     """
-    email: String!
+    email: String! @validate(email: true)
 }
 
 """
