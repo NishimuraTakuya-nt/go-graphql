@@ -18,3 +18,10 @@ type Sample struct {
 	// 更新日時
 	UpdatedAt time.Time
 }
+
+type CreateSampleInput struct {
+	StringVal string
+	IntVal    int
+	ArrayVal  []string
+	Email     string
+}

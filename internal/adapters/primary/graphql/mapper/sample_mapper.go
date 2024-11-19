@@ -19,3 +19,30 @@ func ToDTO(domain *models.Sample) *dto.Sample {
 		UpdatedAt: domain.UpdatedAt,
 	}
 }
+
+func ToDomain(dto *dto.Sample) *models.Sample {
+	if dto == nil {
+		return nil
+	}
+	return &models.Sample{
+		ID:        dto.ID,
+		StringVal: dto.StringVal,
+		IntVal:    dto.IntVal,
+		ArrayVal:  dto.ArrayVal,
+		Email:     dto.Email,
+		CreatedAt: dto.CreatedAt,
+		UpdatedAt: dto.UpdatedAt,
+	}
+}
+
+func ToDomainCreateSampleInput(dto *dto.CreateSampleInput) *models.CreateSampleInput {
+	if dto == nil {
+		return nil
+	}
+	return &models.CreateSampleInput{
+		StringVal: dto.StringVal,
+		IntVal:    dto.IntVal,
+		ArrayVal:  dto.ArrayVal,
+		Email:     dto.Email,
+	}
+}

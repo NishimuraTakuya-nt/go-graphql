@@ -6,7 +6,6 @@ package resolvers
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/NishimuraTakuya-nt/go-graphql/internal/adapters/primary/graphql/dto"
 	"github.com/NishimuraTakuya-nt/go-graphql/internal/adapters/primary/graphql/mapper"
@@ -14,16 +13,23 @@ import (
 
 // CreateSample is the resolver for the createSample field.
 func (r *mutationResolver) CreateSample(ctx context.Context, input dto.CreateSampleInput) (*dto.CreateSamplePayload, error) {
-	panic(fmt.Errorf("not implemented: CreateSample - createSample"))
-}
-
-// Sample is the resolver for the sample field.
-func (r *queryResolver) Sample(ctx context.Context, id string) (*dto.Sample, error) {
-	domainSample, err := r.sampleUsecase.Get(ctx, id)
+	createSample := mapper.ToDomainCreateSampleInput(&input)
+	s, err := r.sampleUsecase.Create(ctx, createSample)
 	if err != nil {
 		return nil, err
 	}
 
-	d := mapper.ToDTO(domainSample)
+	d := mapper.ToDTO(s)
+	return &dto.CreateSamplePayload{Sample: d}, nil
+}
+
+// Sample is the resolver for the sample field.
+func (r *queryResolver) Sample(ctx context.Context, id string) (*dto.Sample, error) {
+	s, err := r.sampleUsecase.Get(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+
+	d := mapper.ToDTO(s)
 	return d, nil
 }

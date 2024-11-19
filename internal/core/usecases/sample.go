@@ -9,6 +9,7 @@ import (
 
 type SampleUsecase interface {
 	Get(ctx context.Context, id string) (*models.Sample, error)
+	Create(ctx context.Context, sample *models.CreateSampleInput) (*models.Sample, error)
 }
 
 type sampleUsecase struct {
@@ -25,6 +26,18 @@ func (u *sampleUsecase) Get(ctx context.Context, id string) (*models.Sample, err
 		IntVal:    10,
 		ArrayVal:  []string{"sample1", "sample2"},
 		Email:     "aa@aa.com",
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
+	}, nil
+}
+
+func (u *sampleUsecase) Create(ctx context.Context, input *models.CreateSampleInput) (*models.Sample, error) {
+	return &models.Sample{
+		ID:        "sample1",
+		StringVal: input.StringVal,
+		IntVal:    input.IntVal,
+		ArrayVal:  input.ArrayVal,
+		Email:     input.Email,
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
 	}, nil
