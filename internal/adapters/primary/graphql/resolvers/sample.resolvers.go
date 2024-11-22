@@ -33,3 +33,17 @@ func (r *queryResolver) Sample(ctx context.Context, id string) (*dto.Sample, err
 	d := mapper.ToDTO(s)
 	return d, nil
 }
+
+// ListSample is the resolver for the listSample field.
+func (r *queryResolver) ListSample(ctx context.Context, offset int, limit int) ([]*dto.Sample, error) {
+	s, err := r.sampleUsecase.List(ctx, offset, limit)
+	if err != nil {
+		return nil, err
+	}
+
+	var d []*dto.Sample
+	for _, v := range s {
+		d = append(d, mapper.ToDTO(v))
+	}
+	return d, nil
+}

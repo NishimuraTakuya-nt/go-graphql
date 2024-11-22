@@ -4,4 +4,9 @@ extend type Query {
     """
     sample(id: ID!): Sample
 
+    """
+    サンプルのリスト取得
+    """
+    listSample(offset: Int!, limit: Int!): [Sample!]!
+
 }

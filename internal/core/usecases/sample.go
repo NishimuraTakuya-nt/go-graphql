@@ -9,6 +9,7 @@ import (
 
 type SampleUsecase interface {
 	Get(ctx context.Context, id string) (*models.Sample, error)
+	List(ctx context.Context, offset, limit int) ([]*models.Sample, error)
 	Create(ctx context.Context, sample *models.CreateSampleInput) (*models.Sample, error)
 }
 
@@ -28,6 +29,29 @@ func (u *sampleUsecase) Get(ctx context.Context, id string) (*models.Sample, err
 		Email:     "aa@aa.com",
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
+	}, nil
+}
+
+func (u *sampleUsecase) List(ctx context.Context, offset, limit int) ([]*models.Sample, error) {
+	return []*models.Sample{
+		{
+			ID:        "1",
+			StringVal: "sample1",
+			IntVal:    10,
+			ArrayVal:  []string{"sample1", "sample2"},
+			Email:     "aa@aa.com",
+			CreatedAt: time.Now(),
+			UpdatedAt: time.Now(),
+		},
+		{
+			ID:        "2",
+			StringVal: "sample2",
+			IntVal:    11,
+			ArrayVal:  []string{"sample3", "sample4"},
+			Email:     "bb@bb.com",
+			CreatedAt: time.Now(),
+			UpdatedAt: time.Now(),
+		},
 	}, nil
 }
 

@@ -63,9 +63,10 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		Empty   func(childComplexity int) int
-		Sample  func(childComplexity int, id string) int
-		SampleX func(childComplexity int, id string) int
+		Empty      func(childComplexity int) int
+		ListSample func(childComplexity int, offset int, limit int) int
+		Sample     func(childComplexity int, id string) int
+		SampleX    func(childComplexity int, id string) int
 	}
 
 	Sample struct {
@@ -97,6 +98,7 @@ type MutationResolver interface {
 type QueryResolver interface {
 	Empty(ctx context.Context) (*string, error)
 	Sample(ctx context.Context, id string) (*dto.Sample, error)
+	ListSample(ctx context.Context, offset int, limit int) ([]*dto.Sample, error)
 	SampleX(ctx context.Context, id string) (*dto.SampleX, error)
 }
 
@@ -170,6 +172,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.Empty(childComplexity), true
+
+	case "Query.listSample":
+		if e.complexity.Query.ListSample == nil {
+			break
+		}
+
+		args, err := ec.field_Query_listSample_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.ListSample(childComplexity, args["offset"].(int), args["limit"].(int)), true
 
 	case "Query.sample":
 		if e.complexity.Query.Sample == nil {
@@ -488,6 +502,11 @@ type CreateSampleXPayload {
     IDによるサンプルの取得
     """
     sample(id: ID!): Sample
+
+    """
+    サンプルのリスト取得
+    """
+    listSample(offset: Int!, limit: Int!): [Sample!]!
 
 }`, BuiltIn: false},
 	{Name: "../schema/query/sampleX.graphqls", Input: `extend type Query {
@@ -876,6 +895,47 @@ func (ec *executionContext) field_Query___type_argsName(
 	}
 
 	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_listSample_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	arg0, err := ec.field_Query_listSample_argsOffset(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["offset"] = arg0
+	arg1, err := ec.field_Query_listSample_argsLimit(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["limit"] = arg1
+	return args, nil
+}
+func (ec *executionContext) field_Query_listSample_argsOffset(
+	ctx context.Context,
+	rawArgs map[string]interface{},
+) (int, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("offset"))
+	if tmp, ok := rawArgs["offset"]; ok {
+		return ec.unmarshalNInt2int(ctx, tmp)
+	}
+
+	var zeroVal int
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_listSample_argsLimit(
+	ctx context.Context,
+	rawArgs map[string]interface{},
+) (int, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("limit"))
+	if tmp, ok := rawArgs["limit"]; ok {
+		return ec.unmarshalNInt2int(ctx, tmp)
+	}
+
+	var zeroVal int
 	return zeroVal, nil
 }
 
@@ -1361,6 +1421,77 @@ func (ec *executionContext) fieldContext_Query_sample(ctx context.Context, field
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Query_sample_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_listSample(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_listSample(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().ListSample(rctx, fc.Args["offset"].(int), fc.Args["limit"].(int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*dto.Sample)
+	fc.Result = res
+	return ec.marshalNSample2ᚕᚖgithubᚗcomᚋNishimuraTakuyaᚑntᚋgoᚑgraphqlᚋinternalᚋadaptersᚋprimaryᚋgraphqlᚋdtoᚐSampleᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_listSample(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Sample_id(ctx, field)
+			case "stringVal":
+				return ec.fieldContext_Sample_stringVal(ctx, field)
+			case "intVal":
+				return ec.fieldContext_Sample_intVal(ctx, field)
+			case "arrayVal":
+				return ec.fieldContext_Sample_arrayVal(ctx, field)
+			case "email":
+				return ec.fieldContext_Sample_email(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Sample_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_Sample_updatedAt(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Sample", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_listSample_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -4349,6 +4480,28 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "listSample":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_listSample(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
 		case "sampleX":
 			field := field
 
@@ -4959,6 +5112,50 @@ func (ec *executionContext) marshalNInt2int(ctx context.Context, sel ast.Selecti
 		}
 	}
 	return res
+}
+
+func (ec *executionContext) marshalNSample2ᚕᚖgithubᚗcomᚋNishimuraTakuyaᚑntᚋgoᚑgraphqlᚋinternalᚋadaptersᚋprimaryᚋgraphqlᚋdtoᚐSampleᚄ(ctx context.Context, sel ast.SelectionSet, v []*dto.Sample) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNSample2ᚖgithubᚗcomᚋNishimuraTakuyaᚑntᚋgoᚑgraphqlᚋinternalᚋadaptersᚋprimaryᚋgraphqlᚋdtoᚐSample(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
 }
 
 func (ec *executionContext) marshalNSample2ᚖgithubᚗcomᚋNishimuraTakuyaᚑntᚋgoᚑgraphqlᚋinternalᚋadaptersᚋprimaryᚋgraphqlᚋdtoᚐSample(ctx context.Context, sel ast.SelectionSet, v *dto.Sample) graphql.Marshaler {

@@ -1,4 +1,4 @@
-.PHONY: lint lint-fix test down build up clean generate wire swagger generate-mocks help
+.PHONY: lint lint-fix test down build up clean generate-gql wire swagger generate-mocks help
 
 NAME := go-graphql
 DC := docker compose
@@ -28,7 +28,7 @@ clean: ## Clean up
 	docker system prune -f
 
 ## Generate ###################################################################################
-generate:
+generate-gql:
 	go run github.com/99designs/gqlgen generate
 
 wire: ## Generate wire
